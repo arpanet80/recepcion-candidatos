@@ -65,7 +65,7 @@ export class LoginComponent implements OnDestroy, OnInit {
       this.loading = true;
       this.errorMessage = "";
 
-      const idsistema = 2;      /// ID del sistema en base de datos sistemas
+      const idsistema = 8;      /// ID del sistema en base de datos sistemas
 
       const { usuario, contrasena } = this.myForm.value;
 
