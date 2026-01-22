@@ -27,8 +27,8 @@ export class LoginComponent implements OnDestroy, OnInit {
   remainingTime: number = 0;
 
   public myForm: FormGroup = this.fb.group({
-    usuario: ['dante.ibanez', [Validators.required, Validators.minLength(3)]],
-    contrasena: ['Passw0rd', [Validators.required, Validators.minLength(3)]],
+    usuario: ['', [Validators.required, Validators.minLength(3)]],
+    contrasena: ['', [Validators.required, Validators.minLength(3)]],
   });
 
   ngOnInit(): void {
