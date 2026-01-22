@@ -73,12 +73,9 @@ export class ReportesController {
       whastapp: requisito.whastapp,
       fecha: this.formatearFechaEs(requisito.fecharegistro.toString())
     }
-      
 
     // 2. Generar Word
     const buffer = await this.reportesService.generarSustitutoWord({
-      // sustituto,
-      // requisito,
       info: INFO_REGISTRO,
     });
 
@@ -118,7 +115,6 @@ export class ReportesController {
 
   }
 
-
   formatearFechaEs(fechaStr: string): string {
     const date = new Date(fechaStr);
     const dias = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
@@ -141,14 +137,12 @@ export class ReportesController {
   }
 
   fechaAEspanol(fechaStr: string): string {
-    // 1. Parsea el string "21/1/2025"
     const [dia, mes, anio] = fechaStr.split('/').map(Number);
     const meses = [
       'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
       'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
     ];
 
-    // 2. Devuelve formato español
     return `${dia} de ${meses[mes - 1]} de ${anio}`;
   }
 

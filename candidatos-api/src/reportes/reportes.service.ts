@@ -28,8 +28,6 @@ export class ReportesService {
 
     // Rellenamos la plantilla
     doc.render({
-      // ...datos.sustituto,
-      // ...datos.requisito,
       ...datos.info,
     });
 

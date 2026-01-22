@@ -1,11 +1,11 @@
-name: Docker Build and Push votantes-ui
+name: Docker Build and Push candidatos-api
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'votantes-ui/**'  # Solo se activará si hay cambios en votantes-ui
+      - 'candidatos-api/**'  # Solo se activará si hay cambios en candidatos-api
 
 jobs:
   build-and-push:
@@ -24,13 +24,13 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           registry: 10.51.15.42:5000
 
-      # 3. Construir la imagen Docker optimizada para votantes-ui
-      - name: Build Docker image for votantes-ui
+      # 3. Construir la imagen Docker optimizada
+      - name: Build Docker image for candidatos-api
         run: |
-          cd votantes-ui
-          docker build -t 10.51.15.42:5000/votantes-ui:latest -f Dockerfile .
+          cd candidatos-api
+          docker build -t 10.51.15.42:5000/candidatos-api:latest -f Dockerfile .
 
       # 4. Subir la imagen Docker al Registry privado
       - name: Push Docker image to Registry
         run: |
-          docker push 10.51.15.42:5000/votantes-ui:latest
+          docker push 10.51.15.42:5000/candidatos-api:latest

@@ -1,42 +1,29 @@
 # PARA ARMAR LOS CNTENEDORES CON IMAGEN DESDE DOCKER HUB
 services:
-  files:
-    image: nginx
-    container_name: votantes-files
-    ports:
-      - "8123:80"
-    volumes:
-      - /mnt/docselectoral:/usr/share/nginx/html
-    restart: always
-    networks:
-      - votantes-net
   api:
-    image: 10.51.15.42:5000/votantes-api:latest
-    container_name: votantes-api
+    image: 10.51.15.42:5000/candidatos-api:latest
+    container_name: candidatos-api
     ports:
-      - 3002:3000
+      - 3008:3000
     restart: always
     networks:
-      - votantes-net
-
-
+      - candidatos-net
   app:
-    image: 10.51.15.42:5000/votantes-ui:latest
-    container_name: votantes-ui
+    image: 10.51.15.42:5000/candidatos-ui:latest
+    container_name: candidatos-ui
     ports:
-      - 8545:80
+      - 8570:80
     restart: always
     depends_on:
       - api
-      - files
     networks:
-      - votantes-net
+      - candidatos-net
     environment:
-      API_URL: 'http://10.51.15.41:3002/'
+      API_URL: 'http://10.51.15.41:3008/'
       API_URL_USER: 'http://10.51.15.41:3001/'
       REPORTS_URL: 'http://10.51.15.110:8123/api/reports/'
-      FILES_URL: 'http://10.51.15.41:8123/'
+      API_PADRON: 'http://10.51.15.41:3002/'
 networks:
-  votantes-net:
+  candidatos-net:
     driver: bridge
-    name: votantes-net
+    name: candidatos-net

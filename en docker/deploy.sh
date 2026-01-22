@@ -6,8 +6,8 @@ docker compose down
 
 # Hacer pull de las últimas imágenes desde Docker Hub
 echo "Actualizando imágenes desde Docker Hub..."
-docker pull 10.51.15.42:5000/votantes-api
-docker pull 10.51.15.42:5000/votantes-ui
+docker pull 10.51.15.42:5000/candidatos-api
+docker pull 10.51.15.42:5000/candidatos-ui
 
 # Reiniciar contenedores con las nuevas imágenes
 echo "Reiniciando contenedores..."
