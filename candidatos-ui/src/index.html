@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Sistma interno TED</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+  <!-- ---- variables de entorno ---- -->
+  <script src="env.js"></script>
+
+  <!-- ----------------- Template Keen --------------------------------------------- -->
+  <link href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" rel="stylesheet" />
+  <link href="keen/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css"/>
+  <link href="keen/css/style.bundle.css" rel="stylesheet" type="text/css"/>
+  <!-- ------------------------------------------------------------------------------------------- -->
+
+  <script>
+    // Frame-busting to prevent site from being loaded within a frame without permission (click-jacking)
+    if (window.top != window.self) {
+        window.top.location.replace(window.self.location.href);
+    }
+  </script>
+
+  <!-- ========================================
+       HEADERS DE SEGURIDAD
+      ======================================== -->
+  
+  <!-- Prevenir MIME type sniffing -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  
+  <!-- Prevenir clickjacking (no permitir iframes) -->
+  <!-- <meta http-equiv="X-Frame-Options" content="DENY"> -->
+  
+  <!-- Control de Referrer (qué información enviar al navegar) -->
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  
+  <!-- Content Security Policy (CSP) - AJUSTAR SEGÚN TUS NECESIDADES -->
+  <!-- <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src 'self' https://fonts.gstatic.com data:;
+    img-src 'self' data: https:;
+    connect-src 'self' http://localhost:3000 https://api.tudominio.com;
+    frame-ancestors 'none';
+    base-uri 'self';
+    form-action 'self';
+  "> -->
+  
+  <!-- Permissions Policy (controla qué APIs del navegador puede usar la app) -->
+  <meta http-equiv="Permissions-Policy" content="
+    geolocation=(),
+    microphone=(),
+    camera=(),
+    payment=(),
+    usb=(),
+    magnetometer=(),
+    gyroscope=(),
+    accelerometer=()
+  ">
+  
+  <!-- Prevenir que el navegador abra archivos descargados automáticamente -->
+  <meta http-equiv="X-Download-Options" content="noopen">
+  
+  <!-- Protección XSS en navegadores antiguos (obsoleto pero compatible) -->
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  
+  <!-- Prevenir caché de páginas sensibles -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  
+  <!-- Información de la aplicación -->
+  <meta name="description" content="Sistema de Gestión de Votantes - Aplicación Segura">
+  <meta name="author" content="Tu Organización">
+  
+  <!-- OPCIONAL: Prevenir indexación en buscadores (descomentar si es app privada) -->
+  <!-- <meta name="robots" content="noindex, nofollow"> -->
+  
+
+
+</head>
+<body id="kt_app_body" data-kt-app-layout="dark-sidebar" 
+      data-kt-app-header-fixed="true" data-kt-app-sidebar-enabled="true" 
+      data-kt-app-sidebar-fixed="true" data-kt-app-sidebar-hoverable="true" 
+      data-kt-app-sidebar-push-header="true" data-kt-app-sidebar-push-toolbar="true" 
+      data-kt-app-sidebar-push-footer="true" data-kt-app-toolbar-enabled="true"  
+      class="app-default mat-typography" >
+
+
+
+
+  <app-root></app-root>
+
+
+
+
+
+
+  <!-- ========================================
+       SCRIPTS DE SEGURIDAD (Solo en Producción)
+       ======================================== -->
+  <script>
+    (function() {
+      'use strict';
+      
+      // Verificar si estamos en producción (no localhost)
+      const isProduction = window.location.hostname !== 'localhost' && 
+                          window.location.hostname !== '127.0.0.1' &&
+                          !window.location.hostname.includes('192.168');
+      
+      if (!isProduction) {
+        console.log('%c🔧 Modo Desarrollo - Protecciones de seguridad deshabilitadas', 
+                    'color: orange; font-size: 14px; font-weight: bold;');
+        return;
+      }
+
+      console.log('%c🔒 Modo Producción - Protecciones de seguridad activas', 
+                  'color: green; font-size: 14px; font-weight: bold;');
+
+      // ========================================
+      // 1. DESHABILITAR CLICK DERECHO
+      // ========================================
+      document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        console.log('⚠️ Click derecho deshabilitado en producción');
+      });
+
+      // ========================================
+      // 2. DESHABILITAR TECLAS DE DESARROLLO
+      // ========================================
+      document.addEventListener('keydown', function(e) {
+        // F12
+        if (e.key === 'F12') {
+          e.preventDefault();
+          console.log('⚠️ F12 deshabilitado en producción');
+          return false;
+        }
+        
+        // Ctrl+Shift+I (DevTools)
+        if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+          e.preventDefault();
+          console.log('⚠️ Ctrl+Shift+I deshabilitado en producción');
+          return false;
+        }
+        
+        // Ctrl+Shift+J (Console)
+        if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+          e.preventDefault();
+          console.log('⚠️ Ctrl+Shift+J deshabilitado en producción');
+          return false;
+        }
+        
+        // Ctrl+U (View Source)
+        if (e.ctrlKey && e.key === 'u') {
+          e.preventDefault();
+          console.log('⚠️ Ctrl+U deshabilitado en producción');
+          return false;
+        }
+        
+        // Ctrl+Shift+C (Inspect Element)
+        if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+          e.preventDefault();
+          console.log('⚠️ Ctrl+Shift+C deshabilitado en producción');
+          return false;
+        }
+      });
+
+      // ========================================
+      // 3. DETECTAR SI DEVTOOLS ESTÁ ABIERTA
+      // ========================================
+      let devtoolsOpen = false;
+      const threshold = 160;
+
+      const detectDevTools = function() {
+        const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+        const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+        const orientation = widthThreshold ? 'vertical' : 'horizontal';
+
+        if (!(heightThreshold && widthThreshold) && 
+            ((window.Firebug && window.Firebug.chrome && window.Firebug.chrome.isInitialized) || 
+             widthThreshold || heightThreshold)) {
+          
+          if (!devtoolsOpen) {
+            devtoolsOpen = true;
+            console.log('⚠️ DevTools detectadas - Orientación:', orientation);
+            
+            // OPCIONAL: Acciones adicionales cuando se detectan DevTools
+            // Por ejemplo: mostrar advertencia, registrar evento, etc.
+            // handleDevToolsDetected();
+          }
+        } else {
+          devtoolsOpen = false;
+        }
+      };
+
+      // Verificar cada segundo
+      setInterval(detectDevTools, 1000);
+
+      // ========================================
+      // 4. PREVENIR DRAG & DROP (opcional)
+      // ========================================
+      document.addEventListener('dragover', function(e) {
+        e.preventDefault();
+      });
+      
+      document.addEventListener('drop', function(e) {
+        e.preventDefault();
+      });
+
+      // ========================================
+      // 5. LIMPIAR CONSOLA PERIÓDICAMENTE
+      // ========================================
+      setInterval(function() {
+        if (console.clear) {
+          console.clear();
+        }
+      }, 30000); // Cada 30 segundos
+
+      // ========================================
+      // 6. ADVERTENCIA EN CONSOLA
+      // ========================================
+      console.log('%c⚠️ ADVERTENCIA DE SEGURIDAD', 
+                  'color: red; font-size: 40px; font-weight: bold; text-shadow: 2px 2px 4px black;');
+      
+      console.log('%c¡DETENTE! Esta función del navegador está destinada para desarrolladores.', 
+                  'color: red; font-size: 18px; font-weight: bold;');
+      
+      console.log('%cSi alguien te dijo que copiaras y pegaras algo aquí para habilitar una función o "hackear" la cuenta de alguien, es una estafa y le dará acceso a tu cuenta.', 
+                  'font-size: 16px;');
+      
+      console.log('%cMás información: https://es.wikipedia.org/wiki/Self-XSS', 
+                  'font-size: 14px; color: blue;');
+
+      // ========================================
+      // 7. PREVENIR SELF-XSS
+      // ========================================
+      const originalConsoleLog = console.log;
+      const originalConsoleError = console.error;
+      const originalConsoleWarn = console.warn;
+
+      // Sobrescribir console.log para detectar código malicioso
+      console.log = function() {
+        const args = Array.from(arguments);
+        const message = args.join(' ');
+        
+        // Detectar patrones sospechosos
+        if (message.includes('<script>') || 
+            message.includes('eval(') ||
+            message.includes('document.cookie') ||
+            message.includes('localStorage')) {
+          console.warn('⚠️ Código potencialmente malicioso detectado en consola');
+        }
+        
+        originalConsoleLog.apply(console, arguments);
+      };
+
+      // ========================================
+      // 8. DETECTAR DEBUGGER STATEMENTS
+      // ========================================
+      setInterval(function() {
+        const before = new Date();
+        debugger; // Esta línea se ejecuta solo si DevTools está abierta
+        const after = new Date();
+        
+        if (after - before > 100) {
+          console.log('⚠️ Debugger statement ejecutado - DevTools probablemente abierta');
+        }
+      }, 5000);
+
+      // ========================================
+      // 9. FUNCIÓN PARA MANEJAR DETECCIÓN DE DEVTOOLS
+      // ========================================
+      function handleDevToolsDetected() {
+        // Aquí puedes agregar acciones adicionales:
+        
+        // Opción 1: Mostrar overlay de advertencia
+        // showSecurityWarning();
+        
+        // Opción 2: Registrar evento de seguridad
+        // logSecurityEvent('devtools_opened');
+        
+        // Opción 3: Redirigir a página de advertencia
+        // window.location.href = '/security-warning';
+        
+        // Opción 4: Cerrar sesión automáticamente (MUY AGRESIVO)
+        // sessionStorage.clear();
+        // window.location.href = '/login';
+        
+        console.log('🔒 DevTools detectadas - Evento de seguridad registrado');
+      }
+
+      // ========================================
+      // 10. PREVENIR IFRAME EMBEDDING (adicional)
+      // ========================================
+      if (window.top !== window.self) {
+        console.error('⚠️ Intento de iframe embedding detectado');
+        // Romper el iframe
+        window.top.location = window.self.location;
+      }
+
+      // ========================================
+      // 11. DETECTAR EXTENSIONES DE NAVEGADOR SOSPECHOSAS
+      // ========================================
+      // Algunas extensiones maliciosas pueden ser detectadas
+      const checkForSuspiciousExtensions = function() {
+        // Verificar modificaciones sospechosas en el DOM
+        const scripts = document.querySelectorAll('script');
+        scripts.forEach(function(script) {
+          if (script.src && !script.src.startsWith(window.location.origin)) {
+            console.warn('⚠️ Script externo detectado:', script.src);
+          }
+        });
+      };
+
+      // Ejecutar al cargar la página
+      window.addEventListener('load', checkForSuspiciousExtensions);
+
+      // ========================================
+      // 12. MENSAJE FINAL
+      // ========================================
+      console.log('%c✅ Protecciones de seguridad inicializadas correctamente', 
+                  'color: green; font-size: 14px; font-weight: bold;');
+
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  <!--begin::Global Javascript Bundle(mandatory for all pages)-->
+  <script src="keen/plugins/global/plugins.bundle.js"></script>
+  <script src="keen/js/scripts.bundle.js"></script>
+  <!--end::Global Javascript Bundle-->
+
+</body>
+</html>

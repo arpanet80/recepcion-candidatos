@@ -1,0 +1,305 @@
+<!-- Spinner durante carga inicial -->
+<app-spinner *ngIf="apiService.loading$ | async" message="Cargando datos..."></app-spinner>
+
+<!-- Filtros cascada -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <label class="form-label">Partido</label>
+    <select class="form-select" (change)="onChangePartido($any($event.target).value)">
+      <option value="">-- Todos --</option>
+      @for (p of partidos(); track p.id) {
+        <option [value]="p.nombre">{{ p.sigla }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="col-md-3">
+    <label class="form-label">Provincia</label>
+    <select class="form-select" [disabled]="!provinciasOps().length" (change)="onChangeProvincia($any($event.target).value)">
+      <option value="">-- Todas --</option>
+      @for (pr of provinciasOps(); track pr) {
+        <option [value]="pr">{{ pr }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="col-md-3">
+    <label class="form-label">Municipio</label>
+    <select class="form-select" [disabled]="!municipiosOps().length" (change)="onChangeMunicipio($any($event.target).value)">
+      <option value="">-- Todos --</option>
+      @for (m of municipiosOps(); track m) {
+        <option [value]="m">{{ m }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="col-md-3">
+    <label class="form-label">Candidato</label>
+    <select class="form-select" [disabled]="!candidatosOps().length" (change)="candidatoSel.set($any($event.target).value)">
+      <option value="">-- Todos --</option>
+      @for (cand of candidatosOps(); track cand) {
+        <option [value]="cand">{{ cand }}</option>
+      }
+    </select>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-12">
+    <label class="form-check form-check-custom form-check-solid">
+      <input class="form-check-input" type="checkbox" [checked]="soloInhabilitadosModel" (change)="onToggleInhabilitados($event.target.checked)">
+      <span class="form-check-label fw-semibold text-gray-700">Solo inhabilitados</span>
+    </label>
+  </div>
+</div>
+
+<!-- Tabla de resultados -->
+<div class="table-responsive" [class.opacity-50]="apiService.loading$ | async">
+  <table class="table table-row-dashed align-middle gs-0 gy-4">
+    <thead>
+      <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+        <th>Partido</th>
+        <th>Provincia</th>
+        <th>Municipio</th>
+        <th>Nombre Candidato</th>
+        <th>Candidato</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (c of candidatosFiltrados(); track c.id) {
+        <tr>
+          <td>{{ c.nombre_del_partido }}</td>
+          <td>{{ c.provincia || '-' }}</td>
+          <td>{{ c.municipio || '-' }}</td>
+          <td>{{ c.nombre_completo || '-' }}</td>
+          <td>{{ c.candidato }}</td>
+          <td>
+            @if (c.estado === 'Habilitado') {
+              <span class="badge badge-light-success fs-7"><i class="ki-duotone ki-check-circle fs-8 text-success me-1"></i>Habilitado</span>
+            } @else {
+              <span class="badge badge-light-danger fs-7"><i class="ki-duotone ki-cross-circle fs-8 text-danger me-1"></i>Inhabilitado</span>
+            }
+          </td>
+          <td>
+            <button type="button" class="btn btn-light-primary" [disabled]="c.estado === 'Habilitado' || c.sustituido === true" (click)="abrirModalRecibir(c)" title="Recibir">Recibir</button>
+          </td>
+        </tr>
+      }
+      @empty {
+        <tr><td colspan="6" class="text-center text-muted py-5">No hay candidatos para los filtros seleccionados</td></tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal genérico -->
+<app-generic-modal
+  #recepcionModal
+  modalId="recepcionModal"
+  title="Sustitucion de candidato"
+  width="900px"
+  [contentTemplate]="contentTemplate"
+  [showSaveButton]="true"
+  (saveClicked)="onSaveCandidato()">
+</app-generic-modal>
+
+<ng-template #contentTemplate>
+  
+  <!-- Spinner mientras guarda -->
+  <app-spinner *ngIf="guardando$ | async" message="Guardando..."></app-spinner>
+
+  <div [class.d-none]="guardando$ | async">
+
+  
+  <form [formGroup]="formSustituto" class="gy-3">
+        <h4 class="fw-bold text-gray-800 mb-0">INFORMACIÓN DEL SUSTITUTO</h4>
+
+    <!-- ========== INFORMACIÓN DEL SUSTITUTO ========== -->
+    <div class="card shadow-sm mb-6">
+      
+      <div class="card-body">
+
+        <div class="row g-4">
+
+          <div class="col-md-6">
+          <label class="form-label required">Cédula de identidad</label>
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nro_documento"
+              placeholder="Introduzca una cédula">
+            <button class="btn btn-primary" type="button" (click)="buscarCiudadano()">
+              Buscar
+            </button>
+          </div>
+        </div>
+
+          <div class="col-md-6">
+            <label class="form-label required">Nombre completo</label>
+            <input type="text" readonly class="form-control form-control-solid" formControlName="nombre_completo" readonly />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label required">Candidatura</label>
+            <input type="text" readonly class="form-control form-control-solid" formControlName="candidato" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label required">Organización política</label>
+            <input type="text" readonly class="form-control form-control-solid" formControlName="nombre_del_partido" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label required">Posición</label>
+            <input type="number" readonly class="form-control form-control-solid" formControlName="posicion" />
+          </div>
+          <div class="col-md-6">
+            <!-- <label class="form-label required">Titularidad</label>
+            <input type="text" class="form-control form-control-solid" formControlName="titularidad" /> -->
+            <label class="form-label required">Titularidad</label>
+            <select formControlName="genero" class="form-select form-select-solid">
+              <option value="">-- Seleccione --</option>
+              <option value="M">Titular</option>
+              <option value="F">Suplente</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Campos ocultos para completar el formSustituto -->
+        <input type="hidden" formControlName="departamento">
+        <input type="hidden" formControlName="provincia">
+        <input type="hidden" formControlName="municipio">
+        <input type="hidden" formControlName="genero">
+        <input type="hidden" formControlName="edad">
+        <input type="hidden" formControlName="fecha_nacimiento">
+        <input type="hidden" formControlName="descripcion">
+        <input type="hidden" formControlName="observaciones">
+        <input type="hidden" formControlName="usuario">
+        <input type="hidden" formControlName="estado">
+        <!-- <input type="hidden" formControlName="activo"> -->
+      </div>
+    </div>
+
+    <!-- ========== CUMPLIMIENTO DE REQUISITOS ========== -->
+    <h4 class="fw-bold text-gray-800 mb-0">CUMPLIMIENTO DE REQUISITOS</h4>
+
+    <div class="card shadow-sm">
+
+      <div class="card-body">
+        <form [formGroup]="formRequisito">
+          <div class="table-responsive">
+            <table class="table table-row-dashed align-middle gs-0 gy-4">
+              <thead>
+                <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+                  <th>Documentación requerida</th>
+                  <th width="80">Cumple</th>
+                  <th>Observaciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Certificado de nacimiento original y actualizado</td>
+                  <td>
+                    <div class="form-check form-check-solid">
+                      <input class="form-check-input" type="checkbox" formControlName="certificadonac">
+                    </div>
+                  </td>
+                  <td><input type="text" class="form-control form-control-sm form-control-solid" formControlName="certificadonacobs"></td>
+                </tr>
+                <tr>
+                  <td>Fotocopia de cédula de identidad (colores y legible)</td>
+                  <td>
+                    <div class="form-check form-check-solid">
+                      <input class="form-check-input" type="checkbox" formControlName="cedulacopia">
+                    </div>
+                  </td>
+                  <td><input type="text" class="form-control form-control-sm form-control-solid" formControlName="cedulacopiaobs"></td>
+                </tr>
+                <tr>
+                  <td>Fotocopia de libreta de servicio militar legible o documento equivalente y declaración notarial de autenticidad del documento presentado</td>
+                  <td>
+                    <div class="form-check form-check-solid">
+                      <input class="form-check-input" type="checkbox" formControlName="libretamilitarcopia">
+                    </div>
+                  </td>
+                  <td><input type="text" class="form-control form-control-sm form-control-solid" formControlName="libretamilitarcopiaobs"></td>
+                </tr>
+                <tr>
+                  <td>Certificado original y actualizado de solvencia fiscal extendido por la Contralogia General del Estado</td>
+                  <td>
+                    <div class="form-check form-check-solid">
+                      <input class="form-check-input" type="checkbox" formControlName="solvenciafiscal">
+                    </div>
+                  </td>
+                  <td><input type="text" class="form-control form-control-sm form-control-solid" formControlName="solvenciafiscalobs"></td>
+                </tr>
+                <tr>
+                  <td>Certificado original y actualizado de antecedentes penales REJAP, extendido por el Concejo de la Magistratura</td>
+                  <td>
+                    <div class="form-check form-check-solid">
+                      <input class="form-check-input" type="checkbox" formControlName="rejap">
+                    </div>
+                  </td>
+                  <td><input type="text" class="form-control form-control-sm form-control-solid" formControlName="rejapobs"></td>
+                </tr>
+                <tr>
+                  <td>Declaración notarial original</td>
+                  <td>
+                    <div class="form-check form-check-solid">
+                      <input class="form-check-input" type="checkbox" formControlName="declaracionnotarial">
+                    </div>
+                  </td>
+                  <td><input type="text" class="form-control form-control-sm form-control-solid" formControlName="declaracionnotarialobs"></td>
+                </tr>
+                <tr>
+                  <td>Certificado original y actualizado de registro en el Padrón Electoral Biométrico emitido por el Servicio de Registro Cívico  (SERECÍ)</td>
+                  <td>
+                    <div class="form-check form-check-solid">
+                      <input class="form-check-input" type="checkbox" formControlName="padron">
+                    </div>
+                  </td>
+                  <td><input type="text" class="form-control form-control-sm form-control-solid" formControlName="padronobs"></td>
+                </tr>
+                <tr>
+                  <td>Fotocopia del certificado de idiomas (institución autorizada)</td>
+                  <td>
+                    <div class="form-check form-check-solid">
+                      <input class="form-check-input" type="checkbox" formControlName="certidiomas">
+                    </div>
+                  </td>
+                  <td><input type="text" class="form-control form-control-sm form-control-solid" formControlName="certidiomasobs"></td>
+                </tr>
+                <tr>
+                  <td>Certificado original y actualizado de no violencia CENVI</td>
+                  <td>
+                    <div class="form-check form-check-solid">
+                      <input class="form-check-input" type="checkbox" formControlName="cenvi">
+                    </div>
+                  </td>
+                  <td><input type="text" class="form-control form-control-sm form-control-solid" formControlName="cenviobs"></td>
+                </tr>
+                <tr>
+                  <td>Certificado / declaración notarial de domicilio electoral (circunscripción, asiento y recinto)</td>
+                  <td>
+                    <div class="form-check form-check-solid">
+                      <input class="form-check-input" type="checkbox" formControlName="declaraciondomicilio">
+                    </div>
+                  </td>
+                  <td><input type="text" class="form-control form-control-sm form-control-solid" formControlName="declaraciondomicilioobs" placeholder="Observación"></td>
+                </tr>
+                <tr>
+                  <td>Número de celular de la o el candidato (con acceso a WhatsApp)</td>
+                  <td colspan="2">
+                    <input type="text" class="form-control form-control-sm form-control-solid" formControlName="whastapp" placeholder="Ej. 70000000">
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </form>
+      </div>
+    </div>
+  </form>
+
+  </div>
+</ng-template>

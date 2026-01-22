@@ -1,0 +1,40 @@
+export interface Info {
+    nombre_completo: string,
+    candidato: string,
+    nombre_del_partido: string,
+    posicion: string,
+    titularidad: string,
+
+    certificadonacSI: string,
+    certificadonacNO: string,
+    certificadonacobs: string,
+    cedulacopiaSI: string,
+    cedulacopiaNO: string,
+    cedulacopiaobs: string,
+    libretamilitarcopiaSI: string,
+    libretamilitarcopiaNO: string,
+    libretamilitarcopiaobs: string,
+    solvenciafiscalSI: string,
+    solvenciafiscalNO: string,
+    solvenciafiscalobs: string,
+    rejapSI: string
+    rejapNO: string
+    rejapobs: string
+    declaracionnotarialSI: string,
+    declaracionnotarialNO: string,
+    declaracionnotarialobs: string,
+    padronSI: string
+    padronNO: string
+    padronobs: string
+    certidiomasSI: string,
+    certidiomasNO: string,
+    certidiomasobs: string,
+    cenviSI: string
+    cenviNO: string
+    cenviobs: string
+    declaraciondomicilioSI: string,
+    declaraciondomicilioNO: string,
+    declaraciondomicilioobs: string,
+    whastapp: string,
+    fecha: string
+}

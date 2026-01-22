@@ -1,0 +1,42 @@
+<!-- <input type="file" accept=".xlsx" (change)="onFileSelected($event)" />
+<button (click)="upload()">Importar Excel</button> -->
+
+<!--begin::Card-->
+<div class="card card-custom gutter-b">
+  <div class="card-header">
+    <h3 class="card-title">Importar candidatos desde Excel</h3>
+  </div>
+  <div class="card-body">
+    <!--begin::Form-->
+    <div class="form-group mb-5">
+      <label>Archivo Excel (.xlsx)</label>
+      <div class="custom-file">
+        <input
+          type="file"
+          class="custom-file-input"
+          id="customFile"
+          accept=".xlsx"
+          (change)="onFileSelected($event)"
+        />
+        <label class="custom-file-label" for="customFile">
+          {{ file?.name || 'Elegir archivo...' }}
+        </label>
+      </div>
+    </div>
+
+    <button
+      class="btn btn-primary mr-2"
+      [disabled]="loading || !file"
+      (click)="upload()"
+    >
+      <span
+        *ngIf="loading"
+        class="spinner-border spinner-border-sm mr-2"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      {{ loading ? 'Importando...' : 'Importar' }}
+    </button>
+  </div>
+</div>
+<!--end::Card-->
