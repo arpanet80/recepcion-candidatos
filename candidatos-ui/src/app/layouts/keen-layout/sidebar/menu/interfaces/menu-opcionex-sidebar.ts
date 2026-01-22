@@ -27,7 +27,7 @@ export const menuPrincipal = {
             titulo: 'Configuracion',
             icono: "bi bi-gear-fill",
             url: "/dashboard/configuracion",
-            roles: [Role.Admin, Role.Usuario],
+            roles: [Role.Admin],
             opcionSimple: [
                 {
                     titulo: 'Importar Reporte Candidatos',
