@@ -19,7 +19,7 @@ export class RequisitoController {
 
   @Post()
   create(@Body() dto: CreateRequisitoDto) {
-    console.log(dto);
+    // console.log(dto);
     return this.service.create(dto);
   }
 
