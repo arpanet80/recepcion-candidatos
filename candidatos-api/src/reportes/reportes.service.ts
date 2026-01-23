@@ -11,12 +11,11 @@ export class ReportesService {
   /**
    * Genera el Word en memoria a partir de la plantilla
    */
-  async generarSustitutoWord(datos: {
-    // sustituto: any;
-    // requisito: any;
-    info: Info;
-  }): Promise<Buffer> {
-    const templatePath = path.join(process.cwd(), 'templates', 'sustituto.docx');
+  async generarSustitutoWord(datos: {info: Info; }): Promise<Buffer> {
+    // ← busca DESDE la carpeta src/templates
+    const templatePath = path.join(__dirname, '..', 'templates', 'sustituto.docx');
+
+    //const templatePath = path.join(process.cwd(), 'templates', 'sustituto.docx');
 
     const content = fs.readFileSync(templatePath, 'binary');
     const zip = new PizZip(content);
