@@ -12,10 +12,7 @@ export class ReportesService {
    * Genera el Word en memoria a partir de la plantilla
    */
   async generarSustitutoWord(datos: {info: Info; }): Promise<Buffer> {
-    // ← busca DESDE la carpeta src/templates
-    const templatePath = path.join(__dirname, '..', 'templates', 'sustituto.docx');
-
-    //const templatePath = path.join(process.cwd(), 'templates', 'sustituto.docx');
+    const templatePath = path.join(__dirname, '..', 'templates','templates', 'sustituto.docx');
 
     const content = fs.readFileSync(templatePath, 'binary');
     const zip = new PizZip(content);
@@ -37,7 +34,7 @@ export class ReportesService {
   async generarActaWord(datos: {
     info: DatosActa;
   }): Promise<Buffer> {
-    const templatePath = path.join(process.cwd(), 'templates', 'acta.docx');
+    const templatePath = path.join(__dirname, '..', 'templates', 'templates', 'acta.docx');
     const content = fs.readFileSync(templatePath, 'binary');
     const zip = new PizZip(content);
     const doc = new Docxtemplater(zip, {
